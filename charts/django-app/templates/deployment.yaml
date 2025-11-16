@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "django-app.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "django-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "django-app.name" . }}
+    spec:
+      containers:
+        - name: django
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: {{ .Values.env.DJANGO_SETTINGS_MODULE | quote }}
+            - name: DEBUG
+              value: {{ .Values.env.DEBUG | quote }}
